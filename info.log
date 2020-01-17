@@ -1,0 +1,20 @@
+{"message":"Unauthorized request to path: /bookmark","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /bookmark","level":"error"}
+{"message":"bookmarks is not defined","level":"error"}
+{"message":"Unauthorized request to path: /bookmark","level":"error"}
+{"message":"Unauthorized request to path: /bookmark","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Invalid rating '5' supplied","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Bookmark with id e17da2c3-f097-4f21-aa09-63a5d7f25d78 created","level":"info"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Bookmark with id 9b7974cc-b8fa-49f5-8073-c27f7b9f4597 created","level":"info"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
+{"message":"Unauthorized request to path: /bookmark/","level":"error"}
