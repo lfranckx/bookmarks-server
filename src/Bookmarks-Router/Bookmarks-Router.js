@@ -4,15 +4,27 @@ const { isWebUri } = require('valid-url') // URL validation
 const logger = require('../logger')
 const store = require('../store')
 // const bookmarks = require('../store')
+const BookmarksService = require('../bookmarks-service')
 
-const bookmarkRouter = express.Router()
+const bookmarksRouter = express.Router()
 const bodyParser = express.json()
 
-bookmarkRouter
-    .route('/bookmark')
-    .get((req, res) => {
-        res.json(store.bookmarks)
-        // res.json(bookmarks)
+const serializeBookmark = bookmark => ({
+    id: bookmark.id,
+    title: bookmark.title,
+    url: bookmark.url,
+    description: bookmark.description,
+    rating: Number(bookmark.rating),
+})
+
+bookmarksRouter
+    .route('/bookmarks')
+    .get((req, res, next) => {
+        BookmarksService.getAllBookmarks(req.app.get('db'))
+            .then(bookmarks => {
+                res.json(bookmarks.map(serializeBookmark))
+            })
+            .catch(next)
     })
     .post(bodyParser, (req, res) => {
         // validate that each item exists inside of req
@@ -35,9 +47,8 @@ bookmarkRouter
             return res.status(400).send(`'url' must be a valid URL`)
         }
         // if all requirements pass create id for new bookmark
-        const id = uuid();
         const bookmark = {
-            id,
+            id: uuid(),
             title,
             url,
             description,
@@ -52,8 +63,8 @@ bookmarkRouter
             .json(bookmark)
     })
 
-bookmarkRouter
-    .route('/bookmark/:id')
+bookmarksRouter
+    .route('/bookmarks/:id')
 
     .get((req, res) => {
         const { id } = req.params
@@ -80,11 +91,12 @@ bookmarkRouter
         }
         // delete bookmark and log deletion
         store.bookmarks.splice(bookmarkIndex, 1);
+
         logger.info(`Bookmark with id ${id} deleted.`)
 
         res
             .status(204)
-            .end();
+            .end()
     })
 
-module.exports = (bookmarkRouter)
+module.exports = (bookmarksRouter)
