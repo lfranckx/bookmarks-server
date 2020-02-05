@@ -1,6 +1,6 @@
 const knex = require('knex')
-const app = require('../src/app')
 const fixtures = require('./bookmarks-fixtures')
+const app = require('../src/app')
 
 describe('Bookmarks Endpoints', () => {
     let db
@@ -8,7 +8,7 @@ describe('Bookmarks Endpoints', () => {
     before('make knex instance', () => {
         db = knex({
             client: 'pg',
-            connection: process.env.TEST_DB_URL,
+            connection: process.env.DB_URL,
         })
         app.set('db', db)
     })
@@ -207,9 +207,7 @@ describe('Bookmarks Endpoints', () => {
             .post(`/bookmarks`)
             .send(newBookmarkMissingTitle)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, {
-                error: { message: `'title' is required` }
-            })
+            .expect(400, `'title' is required`)
         })
     
         it(`responds with 400 missing 'url' if not supplied`, () => {
@@ -222,9 +220,7 @@ describe('Bookmarks Endpoints', () => {
             .post(`/bookmarks`)
             .send(newBookmarkMissingUrl)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, {
-                error: { message: `'url' is required` }
-            })
+            .expect(400, `'url' is required`)
         })
     
         it(`responds with 400 missing 'rating' if not supplied`, () => {
@@ -237,9 +233,7 @@ describe('Bookmarks Endpoints', () => {
             .post(`/bookmarks`)
             .send(newBookmarkMissingRating)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, {
-                error: { message: `'rating' is required` }
-            })
+            .expect(400, `'rating' is required`)
         })
     
         it(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
@@ -252,9 +246,7 @@ describe('Bookmarks Endpoints', () => {
             .post(`/bookmarks`)
             .send(newBookmarkInvalidRating)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, {
-                error: { message: `'rating' must be a number between 0 and 5` }
-            })
+            .expect(400, `'rating' must be a number between 0 and 5`)
         })
     
         it(`responds with 400 invalid 'url' if not a valid URL`, () => {
@@ -267,9 +259,7 @@ describe('Bookmarks Endpoints', () => {
             .post(`/bookmarks`)
             .send(newBookmarkInvalidUrl)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, {
-                error: { message: `'url' must be a valid URL` }
-            })
+            .expect(400, `'url' must be a valid URL`)
         })
     
         it('adds a new bookmark to the store', () => {
@@ -290,7 +280,6 @@ describe('Bookmarks Endpoints', () => {
                 expect(res.body.description).to.eql(newBookmark.description)
                 expect(res.body.rating).to.eql(newBookmark.rating)
                 expect(res.body).to.have.property('id')
-                expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
             })
             .then(res =>
                 supertest(app)
