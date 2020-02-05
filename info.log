@@ -857,3 +857,15 @@
 {"message":"Cannot read property 'then' of undefined","level":"error"}
 {"message":"Unauthorized request to path: /api/bookmarks/123456","level":"error"}
 {"message":"Bookmark with id 123456 not found.","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"title is required","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
