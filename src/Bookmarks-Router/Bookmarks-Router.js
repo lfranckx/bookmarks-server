@@ -98,7 +98,7 @@ bookmarksRouter
     const { id, title, url, description, rating } = req.body
     const bookmarkToUpdate = { id, title, url, description, rating}
     
-    const numberOfValues = Oject.values(bookmarkToUpdate).filter(Boolean).length
+    const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length
     if (numberOfValues === 0) {
       return res.status(400).json({
         error: {
