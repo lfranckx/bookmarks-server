@@ -56,7 +56,7 @@ describe('Bookmarks Endpoints', () => {
                 .expect(401, { error: 'Unauthorized request' })
         })
     })
-  
+    // GET ALL ENDPOINT
     describe('GET /api/bookmarks', () => {
         context(`Given no bookmarks`, () => {
             it(`responds with 200 and an empty list`, () => {
@@ -105,7 +105,7 @@ describe('Bookmarks Endpoints', () => {
             })
         })
     })
-  
+    // GET BY ID ENDPOINT
     describe('GET /api/bookmarks/:id', () => {
         context(`Given no bookmarks`, () => {
             it(`responds 404 whe bookmark doesn't exist`, () => {
@@ -113,7 +113,7 @@ describe('Bookmarks Endpoints', () => {
                 .get(`/api/bookmarks/123`)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(404, {
-                    error: { message: `Bookmark Not Found` }
+                    error: { message: `Bookmark doesn't exist` }
                 })
             })
         })
@@ -158,7 +158,7 @@ describe('Bookmarks Endpoints', () => {
             })
         })
     })
-  
+    // DELETE ENDPOINT
     describe('DELETE /api/bookmarks/:id', () => {
         context(`Given no bookmarks`, () => {
             it(`responds 404 whe bookmark doesn't exist`, () => {
@@ -166,7 +166,7 @@ describe('Bookmarks Endpoints', () => {
                 .delete(`/api/bookmarks/123`)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(404, {
-                    error: { message: `Bookmark Not Found` }
+                    error: { message: `Bookmark doesn't exist` }
                 })
             })
         })
@@ -196,7 +196,7 @@ describe('Bookmarks Endpoints', () => {
         })
       })
     })
-  
+    // POST ENDPOINT
     describe('POST /api/bookmarks', () => {
         it(`responds with 400 missing 'title' if not supplied`, () => {
             const newBookmarkMissingTitle = {
@@ -304,7 +304,8 @@ describe('Bookmarks Endpoints', () => {
         })
     })
 
-    describe.only(`PATCH /api/bookmarks/:bookmark_id`, () => {
+    // PATCH ENDPOINT
+    describe(`PATCH /api/bookmarks/:bookmark_id`, () => {
         context(`Given no bookmarks`, () => {
             it(`responds with 404`, () => {
                 const bookmarkId = 123456
@@ -321,10 +322,11 @@ describe('Bookmarks Endpoints', () => {
             beforeEach('insert bookmarks', () => {
                 return db
                     .into('bookmarks')
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .insert(testBookmarks)
             })
 
-            it('responds with 204 and updates thje bookmrak', () => {
+            it('responds with 204 and updates the bookmark', () => {
                 const idToUpdate = 2
                 const updateBookmark = {
                     title: 'update-title',
@@ -332,11 +334,33 @@ describe('Bookmarks Endpoints', () => {
                     description: 'test description',
                     rating: 1,
                 }
+
+                const expectedBookmark = {
+                    ...testBookmarks[idToUpdate-1],
+                    ...updateBookmark
+                }
+
                 return supertest(app)
-                    .patch(`/api/bookmarks/$`)
+                    .patch(`/api/bookmarks/${idToUpdate}`)
                     .send(updateBookmark)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(204)
+                    .then(res => 
+                        supertest(app)
+                            .get(`/api/articles/${idToUpdate}`)
+                            .expect(expectedBookmark)
+                    )
+            })
+
+            it(`responds wioth 400 when no required fields supplied`, () => {
+                const idToUpdate = 2
+                return supertest(app)
+                    .patch(`/api/articles/${idToUpdate}`)
+                    .send({ irrelevantField: 'foo' })
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(400, {
+                        error: { message: `Request body muist contain either 'title', 'url', 'description', and 'rating`}
+                    })
             })
         })
     })
