@@ -339,6 +339,5 @@ describe('Bookmarks Endpoints', () => {
                     .expect(204)
             })
         })
-
-
-  })
+    })
+})
