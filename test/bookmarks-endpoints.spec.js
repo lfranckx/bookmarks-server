@@ -365,12 +365,26 @@ describe('Bookmarks Endpoints', () => {
 
             it(`responds with 204 when updating a subset of fields`, () => {
                 const idToUpdate = 2
-                const updateBookmark = {
-                    title: 'updated article title'
+                const updatedBookmark = {
+                    title: 'updated bookmark title'
                 }
-                const expectedArticle = {
-                    ...testArticles[idToUpdate - 1]
+                const expectedBookmark = {
+                    ...testBookmarks[idToUpdate - 1],
+                    ...updatedBookmark
                 }
+
+                return supertest(app)
+                    .patch(`/api/bookmarks/${idToUpdate}`)
+                    .send({
+                        ...updatedBookmark,
+                        fieldToIgnore: 'should not be in GET response'
+                    })
+                    .expect(204)
+                    .then(res =>
+                        supertest(app)
+                            .get(`/api/bookmarks/${idToUpdate}`)
+                            .expect(expectedBookmark)
+                    )
             })
         })
     })
