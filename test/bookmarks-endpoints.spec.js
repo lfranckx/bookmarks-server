@@ -334,7 +334,9 @@ describe('Bookmarks Endpoints', () => {
                 }
                 return supertest(app)
                     .patch(`/api/bookmarks/$`)
-
+                    .send(updateBookmark)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(204)
             })
         })
 
