@@ -10,7 +10,6 @@ describe('Bookmarks Endpoints', () => {
         db = knex({
             client: 'pg',
             connection: process.env.DB_URL,
-            API_TOKEN: process.env.API_TOKEN
         })
         app.set('db', db)
     })
@@ -305,16 +304,17 @@ describe('Bookmarks Endpoints', () => {
         })
     })
 
-    // describe.only(`PATCH /api/bookmarks/:bookmark_id`, () => {
-    //     context(`Given no bookmarks`, () => {
-    //         it(`responds with 404`, () => {
-    //             const bookmarkId = 123456
-    //             return supertest(app)
-    //                 .patch(`/api/bookmarks/${bookmarkId}`)
-    //                 .expect(404, { error: { message: `Bookmark doesn't exist`} })
-    //         })
-    //     })
-    // })
+    describe.only(`PATCH /api/bookmarks/:bookmark_id`, () => {
+        context(`Given no bookmarks`, () => {
+            it(`responds with 404`, () => {
+                const bookmarkId = 123456
+                return supertest(app)
+                    .patch(`/api/bookmarks/${bookmarkId}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(404, { error: { message: `Bookmark doesn't exist`} })
+            })
+        })
+    })
 
 
   })
