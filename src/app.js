@@ -1,6 +1,5 @@
 require('dotenv').config()
 const express = require('express')
-const app = express()
 const validateBearerToken = require('./validateBearerToken')
 const errorHandler = require('./errorHandler')
 const bookmarksRouter = require('./Bookmarks-Router/Bookmarks-Router')
@@ -11,6 +10,8 @@ const { NODE_ENV } = require('./config')
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
+
+const app = express()
 
 app.use(morgan(morganOption))
 app.use(helmet())

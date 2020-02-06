@@ -2,7 +2,6 @@ const knex = require('knex')
 const fixtures = require('./bookmarks-fixtures')
 const app = require('../src/app')
 
-
 describe('Bookmarks Endpoints', () => {
     let db
   
@@ -55,6 +54,14 @@ describe('Bookmarks Endpoints', () => {
                 .delete(`/api/bookmarks/${aBookmark.id}`)
                 .expect(401, { error: 'Unauthorized request' })
         })
+
+        it(`responds with 401 Unauthorized for PATCH /api/bookmarks/:id`, () => {
+            const aBookmark = testBookmarks[1]
+            return supertest(app)
+              .patch(`/api/bookmarks/${aBookmark.id}`)
+              .send({ title: 'updated-title' })
+              .expect(401, { error: 'Unauthorized request' })
+          })
     })
     // GET ALL ENDPOINT
     describe('GET /api/bookmarks', () => {
@@ -198,45 +205,25 @@ describe('Bookmarks Endpoints', () => {
     })
     // POST ENDPOINT
     describe('POST /api/bookmarks', () => {
-        it(`responds with 400 missing 'title' if not supplied`, () => {
-            const newBookmarkMissingTitle = {
-                // title: 'test-title',
-                url: 'https://test.com',
-                rating: 1,
-            }
-            return supertest(app)
-            .post(`/api/bookmarks`)
-            .send(newBookmarkMissingTitle)
-            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, `'title' is required`)
-        })
-    
-        it(`responds with 400 missing 'url' if not supplied`, () => {
-            const newBookmarkMissingUrl = {
-                title: 'test-title',
-                // url: 'https://test.com',
-                rating: 1,
-            }
-            return supertest(app)
-            .post(`/api/bookmarks`)
-            .send(newBookmarkMissingUrl)
-            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, `'url' is required`)
-        })
-    
-        it(`responds with 400 missing 'rating' if not supplied`, () => {
-            const newBookmarkMissingRating = {
+        ['title', 'url', 'rating'].forEach(field => {
+            const newBookmark = {
                 title: 'test-title',
                 url: 'https://test.com',
-                // rating: 1,
+                rating: 2,
             }
+    
+        it(`responds with 400 missing '${field}' if not supplied`, () => {
+            delete newBookmark[field]
+            
             return supertest(app)
             .post(`/api/bookmarks`)
-            .send(newBookmarkMissingRating)
+            .send(newBookmark)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, `'rating' is required`)
+            .expect(400, {
+                error: { message: `'${field}' is required` }
+            })
         })
-    
+    })   
         it(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
             const newBookmarkInvalidRating = {
                 title: 'test-title',
@@ -247,7 +234,9 @@ describe('Bookmarks Endpoints', () => {
             .post(`/api/bookmarks`)
             .send(newBookmarkInvalidRating)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, `'rating' must be a number between 0 and 5`)
+            .expect(400, {
+                error: { message: `'rating' must be a number between 0 and 5` }
+            })
         })
     
         it(`responds with 400 invalid 'url' if not a valid URL`, () => {
@@ -260,7 +249,9 @@ describe('Bookmarks Endpoints', () => {
             .post(`/api/bookmarks`)
             .send(newBookmarkInvalidUrl)
             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(400, `'url' must be a valid URL`)
+            .expect(400, {
+                error: { message: `'url' must be a valid URL` }
+            })
         })
     
         it('adds a new bookmark to the store', () => {
@@ -281,6 +272,7 @@ describe('Bookmarks Endpoints', () => {
                 expect(res.body.description).to.eql(newBookmark.description)
                 expect(res.body.rating).to.eql(newBookmark.rating)
                 expect(res.body).to.have.property('id')
+                expect(res.headers.location).to.eql(`/api/bookmarks/${res.body.id}`)
             })
             .then(res =>
                 supertest(app)
@@ -316,13 +308,12 @@ describe('Bookmarks Endpoints', () => {
             })
         })
 
-        context(`Given there are bookmarks`, () => {
+        context('Given there are bookmarks in the database', () => {
             const testBookmarks = fixtures.makeBookmarksArray()
 
             beforeEach('insert bookmarks', () => {
                 return db
                     .into('bookmarks')
-                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .insert(testBookmarks)
             })
 
@@ -334,20 +325,19 @@ describe('Bookmarks Endpoints', () => {
                     description: 'test description',
                     rating: 1,
                 }
-
                 const expectedBookmark = {
-                    ...testBookmarks[idToUpdate-1],
+                    ...testBookmarks[idToUpdate - 1],
                     ...updateBookmark
                 }
-
                 return supertest(app)
                     .patch(`/api/bookmarks/${idToUpdate}`)
-                    .send(updateBookmark)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .send(updateBookmark)
                     .expect(204)
                     .then(res => 
                         supertest(app)
-                            .get(`/api/articles/${idToUpdate}`)
+                            .get(`/api/bookmarks/${idToUpdate}`)
+                            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                             .expect(expectedBookmark)
                     )
             })
@@ -355,37 +345,73 @@ describe('Bookmarks Endpoints', () => {
             it(`responds with 400 when no required fields supplied`, () => {
                 const idToUpdate = 2
                 return supertest(app)
-                    .patch(`/api/articles/${idToUpdate}`)
-                    .send({ irrelevantField: 'foo' })
+                    .patch(`/api/bookmarks/${idToUpdate}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .send({ irrelevantField: 'foo' })
                     .expect(400, {
-                        error: { message: `Request body muist contain either 'title', 'url', 'description', and 'rating`}
+                        error: { 
+                            message: `Request body must contain either 'title', 'url', 'description' or 'rating'`
+                        }
                     })
             })
 
-            it(`responds with 204 when updating a subset of fields`, () => {
+            it(`responds with 204 when updating only a subset of fields`, () => {
                 const idToUpdate = 2
-                const updatedBookmark = {
-                    title: 'updated bookmark title'
+                const updateBookmark = {
+                    title: 'updated bookmark title',
                 }
                 const expectedBookmark = {
                     ...testBookmarks[idToUpdate - 1],
-                    ...updatedBookmark
+                    ...updateBookmark
                 }
 
                 return supertest(app)
                     .patch(`/api/bookmarks/${idToUpdate}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .send({
-                        ...updatedBookmark,
+                        ...updateBookmark,
                         fieldToIgnore: 'should not be in GET response'
                     })
                     .expect(204)
                     .then(res =>
                         supertest(app)
                             .get(`/api/bookmarks/${idToUpdate}`)
+                            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                             .expect(expectedBookmark)
                     )
             })
+
+            it(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
+                const idToUpdate = 2
+                const updateInvalidRating = {
+                    rating: 'invalid',
+                }
+                return supertest(app)
+                    .patch(`/api/bookmarks/${idToUpdate}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .send(updateInvalidRating)
+                    .expect(400, {
+                        error: {
+                            message: `'rating' must be a number between 0 and 5`
+                        }
+                    })
+            })
+
+            it(`responds with 400 invalid 'url' if not a valid URL`, () => {
+                const idToUpdate = 2
+                const updateInvalidUrl = {
+                    url: 'htp://invalid-url',
+                }
+                return supertest(app)
+                    .patch(`/api/bookmarks/${idToUpdate}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .send(updateInvalidUrl)
+                    .expect(400, {
+                        error: {
+                            message: `'url' must be a valid URL`
+                        }
+                    })
+                })
         })
     })
 })
