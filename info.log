@@ -1546,3 +1546,49 @@
 {"level":"error","message":""}
 {"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
 {"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"level":"error","message":""}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks","level":"error"}
+{"message":"Bookmark with id 1 created.","level":"info"}
+{"message":"Unauthorized request to path: /api/bookmarks/$props.id","level":"error"}
+{"message":"select * from \"bookmarks\" where \"id\" = $1 limit $2 - invalid input syntax for type integer: \"$props.id\"","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks/$props.id","level":"error"}
+{"message":"select * from \"bookmarks\" where \"id\" = $1 limit $2 - invalid input syntax for type integer: \"$props.id\"","level":"error"}
